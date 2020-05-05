@@ -9,7 +9,7 @@
     (let nixos-hardware =
            builtins.fetchTarball
              https://github.com/NixOS/nixos-hardware/archive/master.tar.gz;
-     in "${nixos-hardware}/lenovo/thinkpad/x1"
+     in "${nixos-hardware}/lenovo/thinkpad/x1")
   ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
