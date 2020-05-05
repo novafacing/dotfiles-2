@@ -41,7 +41,6 @@ device: username:
     vim
     wget
     sshfs
-
     gnumake               # for our own makefile
     my.cached-nix-shell   # for instant nix-shell scripts
   ];
@@ -58,7 +57,12 @@ device: username:
   my.user = {
     isNormalUser = true;
     uid = 1000;
-    extraGroups = [ "wheel" "video" "networkmanager" ];
+    extraGroups = [ 
+      "wheel" 
+      "video" 
+      "networkmanager" 
+      "audio"
+    ];
     shell = pkgs.zsh;
   };
 
