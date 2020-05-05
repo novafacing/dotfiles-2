@@ -26,6 +26,46 @@
 
 ## Quick start
 
+Set up system:
+
+If on wireless networking:
+
+```sh
+sudo su
+sudo wpa_supplicant -B -i <WIRELESS_INTERFACE> \
+    -c <(wpa_passphrase '<SSID>' '<PASSWORD'>)
+```
+
+Set up disk partitioning and mount install environment:
+
+```sh
+sudo parted /dev/nvme0n1 -- mklabel gpt
+sudo parted /dev/nvme0n1 -- mkpart ESP fat32 1MiB 512MiB
+sudo parted /dev/nvme0n1 -- set 1 boot on
+sudo parted /dev/nvme0n1 -- mkpart primary linux-swap 512MiB 8512MiB
+sudo mkswap /dev/nvme0n1p2
+sudo swapon /dev/nvme0n1p2
+sudo parted /dev/nvme0n1 -- mkpart primary 8512MiB 100%
+sudo pvcreate /dev/nvme0n1p3
+sudo vgcreate pool /dev/nvme0n1p3
+sudo lvcreate -L 96G -n root pool
+sudo lvcreate -L 133G -n home pool
+sudo mkfs.ext4 -L root /dev/pool/root
+sudo mkfs.ext4 -L home /dev/pool/home
+sudo mount /dev/disk/by-label/root /mnt
+sudo mkdir -p /mnt/home /mnt/boot
+sudo mount /dev/disk/by-label/home /mnt/home
+sudo mount /dev/disk/by-label/boot /mnt/boot
+```
+
+Install git and make in installer:
+```sh
+nix-channel --add https://nixos.org/channels/nixpkgs-unstable
+nix-channel --update
+nix-env -iA nixpkgs.git
+nix-env -iA nixpkgs.gnumake
+```
+
 ```sh
 # Assumes your partitions are set up and root is mounted on /mnt
 git clone https://github.com/hlissner/dotfiles /etc/dotfiles
